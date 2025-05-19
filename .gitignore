@@ -1,0 +1,32 @@
+# === Python bytecode ===
+__pycache__/
+*.py[cod]
+*.pyo
+
+# === Virtual environments ===
+env/
+venv/
+web/
+.web/
+
+# === VS Code ===
+.vscode/
+
+# === macOS system files ===
+.DS_Store
+
+# === Logs and reports ===
+*.log
+*.tmp
+/tmp/webpage_*.txt
+/tmp/webpage_*.html
+/tmp/webpage_*.md
+/tmp/webpage_*.json
+
+# === Selenium browser profiles ===
+selenium_profile/
+
+# === PyInstaller/Build artifacts ===
+build/
+dist/
+*.spec
