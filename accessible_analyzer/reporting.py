@@ -80,6 +80,13 @@ def _format_counts(counts: Mapping[str, int]) -> str:
     return ", ".join(f"{name} ({count})" for name, count in counts.items())
 
 
+def _escape_markdown(value: Any) -> str:
+    text = html.escape(str(value), quote=False)
+    for character in r"\`*_{}[]()#+-.!|":
+        text = text.replace(character, f"\\{character}")
+    return text
+
+
 def render_text(report: Mapping[str, Any]) -> str:
     metadata = report.get("metadata", {})
     lines = [
@@ -112,34 +119,35 @@ def render_text(report: Mapping[str, Any]) -> str:
 
 def render_markdown(report: Mapping[str, Any]) -> str:
     metadata = report.get("metadata", {})
+    escape = _escape_markdown
     lines = [
         "# Webpage Layout Report",
         "",
-        f"- Source: `{metadata.get('source', 'unknown')}`",
-        f"- Analyzed at: `{metadata.get('analyzed_at', 'unknown')}`",
-        f"- Schema version: `{report.get('schema_version', 'unknown')}`",
+        f"- Source: {escape(metadata.get('source', 'unknown'))}",
+        f"- Analyzed at: {escape(metadata.get('analyzed_at', 'unknown'))}",
+        f"- Schema version: {escape(report.get('schema_version', 'unknown'))}",
     ]
 
     warnings = report.get("warnings", [])
     if warnings:
         lines.extend(["", "## Warnings"])
-        lines.extend(f"- {warning}" for warning in warnings)
+        lines.extend(f"- {escape(warning)}" for warning in warnings)
 
     for section in report.get("sections", []):
         lines.extend(
             [
                 "",
-                f"## {section['name']}",
-                f"- Elements: {section['element_count']}",
-                f"- Fonts: {_format_counts(section['fonts'])}",
-                f"- Sizes: {_format_counts(section['sizes'])}",
-                f"- Text colors: {_format_counts(section['text_colors'])}",
-                f"- Backgrounds: {_format_counts(section['background_colors'])}",
-                f"- Layouts: {_format_counts(section['layouts'])}",
+                f"## {escape(section['name'])}",
+                f"- Elements: {escape(section['element_count'])}",
+                f"- Fonts: {escape(_format_counts(section['fonts']))}",
+                f"- Sizes: {escape(_format_counts(section['sizes']))}",
+                f"- Text colors: {escape(_format_counts(section['text_colors']))}",
+                f"- Backgrounds: {escape(_format_counts(section['background_colors']))}",
+                f"- Layouts: {escape(_format_counts(section['layouts']))}",
             ]
         )
 
-    lines.extend(["", "## Spoken layout summary", str(report.get("spoken_summary", ""))])
+    lines.extend(["", "## Spoken layout summary", escape(report.get("spoken_summary", ""))])
     return "\n".join(lines) + "\n"
 
 
