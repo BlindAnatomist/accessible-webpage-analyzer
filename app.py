@@ -29,6 +29,7 @@ from accessible_analyzer.coordinates import normalize_rect
 from accessible_analyzer.output import create_run_directory, default_output_root, write_reports
 from accessible_analyzer.reporting import build_report_data, render_text
 from accessible_analyzer.speech import speak
+from accessible_analyzer.sources import validate_source
 
 _RGB_PATTERN = re.compile(
     r"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([0-9.]+))?\s*\)",
@@ -115,6 +116,12 @@ class WebDescribeApp(QWidget):
             self.analyze_url(Path(html_path).resolve().as_uri())
 
     def analyze_url(self, url):
+        try:
+            url = validate_source(url)
+        except ValueError as error:
+            self.text_area.setText(f"Analysis did not start: {error}")
+            return
+
         self.text_area.setText(
             "Analyzing page. The application may be less responsive until this run finishes."
         )
