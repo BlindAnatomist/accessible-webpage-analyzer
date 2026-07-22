@@ -37,8 +37,9 @@ It reads selected computed CSS and element rectangles from the rendered DOM, gro
 The implementation branch now:
 
 - prevents shell interpretation of webpage-derived speech text;
-- escapes webpage-derived values in HTML reports;
+- escapes webpage-derived values in HTML and Markdown reports;
 - preserves raw evidence in structured JSON;
+- rejects source schemes other than HTTP, HTTPS, and local file addresses;
 - guarantees Selenium cleanup through `finally`;
 - converts viewport rectangles into stable document coordinates;
 - creates a separate timestamped directory for every report run;
@@ -46,8 +47,8 @@ The implementation branch now:
 - records omitted-element counts instead of silently hiding all extraction failures;
 - uses safe local-file URLs;
 - adds accessible names and descriptions to the principal interface elements;
-- separates coordinate, report, output, and speech logic into testable modules;
-- adds nine standard-library unit tests and a GitHub Actions quality workflow;
+- separates coordinate, report, output, source-validation, and speech logic into testable modules;
+- adds thirteen standard-library unit tests and a GitHub Actions quality workflow;
 - replaces the malformed README with accurate installation, capability, limitation, and authorship information.
 
 ## Verification state
@@ -59,7 +60,9 @@ python -m unittest discover -s tests -v
 python -m compileall -q app.py accessible_analyzer tests
 ```
 
-Result: nine tests passed and Python compilation passed.
+Result: thirteen tests passed and Python compilation passed.
+
+The GitHub connector's combined-status read did not return a check result for the branch head. The workflow file is committed, but no remote workflow success is claimed here.
 
 Not yet verified:
 
