@@ -5,6 +5,7 @@ from accessible_analyzer.reporting import (
     build_report_data,
     render_html,
     render_json,
+    render_markdown,
     render_text,
 )
 
@@ -39,6 +40,13 @@ class ReportingTests(unittest.TestCase):
         self.assertIn("&lt;script&gt;alert", html)
         self.assertIn("&lt;unsafe&gt;", html)
         self.assertIn("Example &lt;warning&gt;", html)
+
+    def test_markdown_escapes_page_derived_markup(self):
+        markdown = render_markdown(self.report)
+
+        self.assertNotIn("<script>alert", markdown)
+        self.assertIn("&lt;script&gt;alert", markdown)
+        self.assertNotIn("[unsafe](javascript:alert(1))", markdown)
 
     def test_json_includes_schema_and_metadata(self):
         payload = json.loads(render_json(self.report))
