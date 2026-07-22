@@ -1,114 +1,122 @@
 # Accessible Webpage Analyzer
 
-An AI-powered desktop app that visually analyzes webpages — both live React apps and static HTML files — and generates richly detailed, accessible layout summaries. Designed for blind developers and screen reader users, it extracts computed styles, identifies layout patterns, and creates natural language reports describing how the page looks.
+Accessible Webpage Analyzer is a macOS desktop prototype that converts selected visual and layout properties of a rendered webpage into text, Markdown, HTML, JSON, and spoken summaries.
 
-## ✨ What It Does
+It is designed as an exploratory tool for blind developers and screen-reader users who need a linguistic account of how a webpage is visually organized.
 
-- Detects font names, font sizes, and styling
-- Analyzes text, background, and border colors (in plain names, not hex)
-- Identifies Flexbox and Grid layout usage
-- Reports element positions (top, left, width, height)
-- Groups elements by semantic section: `header`, `main`, `footer`, etc.
-- Summarizes page structure as natural, spoken text
-- Exports:
-  - 📝 Plain text summary
-  - 🧾 JSON layout model
-  - 🌐 HTML report
-  - 📄 Markdown report
-- Speaks the summary aloud using macOS `say`
+This version is not yet a complete accessibility rules engine, does not inspect the browser accessibility tree, and does not use an AI model.
 
----
+## Current capabilities
 
-## 🖥️ Features
+- Analyze a live webpage URL in Chrome.
+- Analyze a local HTML file.
+- Read selected computed CSS properties.
+- Record document-relative element rectangles.
+- Group visible elements under broad semantic containers such as `header`, `main`, `nav`, `article`, `section`, and `footer`.
+- Summarize common fonts, sizes, colors, backgrounds, and CSS display values.
+- Export one source-identified report run in four formats:
+  - plain text;
+  - Markdown;
+  - escaped HTML;
+  - structured JSON.
+- Speak the summary through the macOS `say` command without passing webpage content through a shell.
 
-| Feature                          | Supported |
-| -------------------------------- | --------- |
-| Analyze live React URLs          | ✅        |
-| Analyze local HTML files         | ✅        |
-| Extract computed styles          | ✅        |
-| Layout detection (Flex/Grid)     | ✅        |
-| Semantic section grouping        | ✅        |
-| JSON layout model export         | ✅        |
-| HTML + Markdown reports          | ✅        |
-| Spoken paragraph summary         | ✅        |
-| Keyboard accessible UI (no drag) | ✅        |
+## Important limitations
 
----
+The current reports describe selected rendered CSS and geometry. They do not establish that a page is accessible.
 
-## 📦 Requirements
+This version does not yet test:
 
-- macOS with Python 3.8+
-- Google Chrome browser (installed)
-- ChromeDriver (auto-installed via `webdriver-manager`)
-- Recommended: macOS `say` command for spoken output
+- heading order;
+- accessible names or roles;
+- landmarks beyond broad DOM grouping;
+- form labels;
+- keyboard order or focus behavior;
+- live regions;
+- WCAG contrast ratios;
+- actual VoiceOver announcements;
+- touch or mobile interaction.
 
----
+Automated analysis cannot replace manual screen-reader testing.
 
-## ⚙️ Setup Instructions
+## Requirements
 
-### 1. Clone the repo
+- macOS;
+- Python 3;
+- Google Chrome;
+- the packages listed in `requirements.txt`.
+
+ChromeDriver is obtained through `webdriver-manager` when the application starts an analysis.
+
+## Installation
 
 ```bash
 git clone https://github.com/Phlypper/accessible-webpage-analyzer.git
 cd accessible-webpage-analyzer
-2. Set up Python environment
 python3 -m venv web
 source web/bin/activate
 pip install -r requirements.txt
-
-🚀 Running the App
-python app.py
-Once launched:
-Click “Analyze Live URL” to scan a running React app (like http://localhost:3000)
-Click “Browse HTML File” to select and analyze a local HTML file
-Click “Open Temp Folder” to see the output reports
-
-📁 Output Files
-After each analysis, these files are saved to your /tmp folder:
-File
-Format
-Description
-webpage_grouped_and_spoken.txt
-Text
-Plaintext summary
-webpage_report.md
-Markdown
-Developer-friendly report
-webpage_report.html
-HTML
-Visual report viewable in browser
-webpage_report.json
-JSON
-Structured layout model for tools
-Use the “Open Temp Folder” button to open these easily on macOS.
-
-🔊 Accessibility Notes
-This tool was designed from the ground up with blind developers in mind:
-All analysis is screen reader–friendly
-Natural language summaries are spoken aloud via VoiceOver + say
-No mouse required — full keyboard navigation
-No drag-and-drop — just accessible file selection dialogs
-
-🔧 Customization Ideas
-Want to extend it?
-Add PDF or CSV export
-Add screenshot previews to the HTML report
-Integrate WCAG contrast checks
-Batch analyze multiple URLs or folders
-
-📄 License
-none
-
-🙌 Credits
-Created with ❤️ by Jason Washburn, for a more inclusive developer experience.
-Built using:
-Python
-PyQt6
-Selenium
-WebDriver Manager
-WebColors
-
-🔗 Links
-GitHub: github.com/Phlypper/accessible-webpage-analyzer
----
 ```
+
+## Run the application
+
+```bash
+python app.py
+```
+
+The interface provides these controls:
+
+- `Analyze Live URL`: enter a webpage address.
+- `Browse HTML File`: choose a local `.html` or `.htm` file.
+- `Open Reports Folder`: open the most recent report directory, or the main reports directory before the first run.
+
+## Report location
+
+Each run creates a separate timestamped directory under:
+
+```text
+/tmp/accessible-webpage-analyzer/
+```
+
+Each run contains:
+
+```text
+webpage_report.txt
+webpage_report.md
+webpage_report.html
+webpage_report.json
+```
+
+The temporary directory is not a durable archive. Copy reports elsewhere when they need to become project evidence.
+
+## Development checks
+
+The pure report, coordinate, output, and speech utilities can be tested without Chrome, PyQt6, or macOS:
+
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q app.py accessible_analyzer tests
+```
+
+A GitHub Actions workflow runs the same checks for repository changes.
+
+## Project direction
+
+The intended architecture separates four layers:
+
+1. visual and layout description;
+2. semantic document analysis;
+3. accessible-name, state, and interaction analysis;
+4. manual VoiceOver acceptance evidence.
+
+The initial fork audit and contribution plan are recorded in `docs/`.
+
+## Authorship and contribution status
+
+Created by Jason Washburn.
+
+The `BlindAnatomist` fork contains independently reviewable audit and repair branches. No fork change is part of the upstream project unless Jason reviews and merges a pull request.
+
+## License
+
+The upstream repository does not currently declare a license. A license should not be selected for Jason without his decision.
