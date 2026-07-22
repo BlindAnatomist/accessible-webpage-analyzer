@@ -1,27 +1,42 @@
 # Safety and testability foundation
 
-Status: planned
+Status: implemented on `work/safety-testability-foundation`; local verification passed; upstream review not requested
 
 Parent branch: `work/accessibility-analyzer-audit`
 
-Proposed implementation branch: `work/safety-testability-foundation`
+Implementation branch: `work/safety-testability-foundation`
 
 ## Objective
 
 Preserve the prototype's present user-facing purpose while repairing the defects that make arbitrary webpage analysis unsafe, difficult to test, and easy to misrepresent.
 
-## In scope
+## Implemented
 
-- remove shell interpretation from speech output;
-- escape analyzed webpage strings in HTML reports;
-- guarantee Selenium driver cleanup;
-- correct document coordinates after scrolling;
-- normalize local file URLs safely;
-- record extraction warnings instead of silently discarding all failures;
-- create timestamped output directories;
-- extract report and speech logic into pure, testable modules;
-- add standard-library unit tests and a lightweight GitHub Actions quality check;
-- repair README formatting and describe implemented capabilities accurately.
+- removed shell interpretation from speech output;
+- escaped analyzed webpage strings in HTML reports;
+- guaranteed Selenium driver cleanup through `finally`;
+- corrected document coordinates after scrolling;
+- normalized local file URLs with `Path.as_uri()`;
+- recorded extraction warning counts instead of silently discarding every failure;
+- created timestamped output directories;
+- extracted report, coordinate, output, and speech logic into pure, testable modules;
+- added nine standard-library unit tests;
+- added a lightweight GitHub Actions quality workflow;
+- repaired README formatting and limited claims to implemented behavior;
+- added accessible names and descriptions to the report field and principal controls.
+
+## Local verification
+
+The following commands passed in the implementation environment:
+
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q app.py accessible_analyzer tests
+```
+
+Result: nine tests passed. Python compilation passed.
+
+The graphical application itself was not run because the implementation environment did not provide macOS, a graphical session, Chrome, ChromeDriver, or VoiceOver. Runtime and VoiceOver acceptance remain separate gates.
 
 ## Deferred
 
@@ -34,14 +49,18 @@ Preserve the prototype's present user-facing purpose while repairing the defects
 - dependency pinning pending confirmation of Jason's supported Python and macOS versions;
 - licensing decisions, which belong to Jason.
 
-## Acceptance conditions
+## Acceptance-condition status
 
-- no webpage-derived value is passed through a shell;
-- HTML output escapes webpage-derived values;
-- document coordinates remain stable after scrolling;
-- driver cleanup occurs through `finally`;
-- report generation can be tested without PyQt6, Selenium, Chrome, or macOS;
-- tests cover HTML escaping, JSON schema metadata, coordinate normalization, timestamped output paths, and safe speech invocation;
-- the quality workflow runs unit tests and Python compilation;
-- README claims do not exceed implemented behavior;
-- no pull request is opened upstream without explicit authorization.
+- Passed: no webpage-derived value is passed through a shell.
+- Passed by unit test: HTML output escapes webpage-derived values.
+- Passed by unit test: document coordinates include scroll offsets.
+- Passed by source inspection and compilation: driver cleanup occurs through `finally`.
+- Passed: report generation is testable without PyQt6, Selenium, Chrome, or macOS.
+- Passed: tests cover HTML escaping, JSON schema metadata, coordinate normalization, timestamped output paths, and safe speech invocation.
+- Implemented: the quality workflow runs unit tests and Python compilation.
+- Passed by source inspection: README claims do not exceed implemented behavior.
+- Preserved: no pull request has been opened upstream.
+
+## Remaining gate before upstream proposal
+
+Run the application on Jason's supported macOS environment with Chrome and VoiceOver. Confirm startup, live-URL analysis, local-file analysis, report-folder behavior, speech behavior, failure recovery, and predictable keyboard focus. Any defect found there should be repaired in this fork before an upstream pull request is opened.
