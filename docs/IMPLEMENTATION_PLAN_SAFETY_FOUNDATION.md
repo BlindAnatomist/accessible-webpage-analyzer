@@ -14,13 +14,15 @@ Preserve the prototype's present user-facing purpose while repairing the defects
 
 - removed shell interpretation from speech output;
 - escaped analyzed webpage strings in HTML reports;
+- escaped analyzed webpage strings in Markdown reports;
 - guaranteed Selenium driver cleanup through `finally`;
 - corrected document coordinates after scrolling;
 - normalized local file URLs with `Path.as_uri()`;
+- rejected source schemes other than HTTP, HTTPS, and local file addresses;
 - recorded extraction warning counts instead of silently discarding every failure;
 - created timestamped output directories;
-- extracted report, coordinate, output, and speech logic into pure, testable modules;
-- added nine standard-library unit tests;
+- extracted report, coordinate, output, source-validation, and speech logic into pure, testable modules;
+- added thirteen standard-library unit tests;
 - added a lightweight GitHub Actions quality workflow;
 - repaired README formatting and limited claims to implemented behavior;
 - added accessible names and descriptions to the report field and principal controls.
@@ -34,7 +36,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q app.py accessible_analyzer tests
 ```
 
-Result: nine tests passed. Python compilation passed.
+Result: thirteen tests passed. Python compilation passed.
 
 The graphical application itself was not run because the implementation environment did not provide macOS, a graphical session, Chrome, ChromeDriver, or VoiceOver. Runtime and VoiceOver acceptance remain separate gates.
 
@@ -53,10 +55,12 @@ The graphical application itself was not run because the implementation environm
 
 - Passed: no webpage-derived value is passed through a shell.
 - Passed by unit test: HTML output escapes webpage-derived values.
+- Passed by unit test: Markdown output escapes webpage-derived markup.
+- Passed by unit test: non-web URL schemes are rejected before browser startup.
 - Passed by unit test: document coordinates include scroll offsets.
 - Passed by source inspection and compilation: driver cleanup occurs through `finally`.
 - Passed: report generation is testable without PyQt6, Selenium, Chrome, or macOS.
-- Passed: tests cover HTML escaping, JSON schema metadata, coordinate normalization, timestamped output paths, and safe speech invocation.
+- Passed: tests cover HTML and Markdown escaping, JSON schema metadata, coordinate normalization, timestamped output paths, source validation, and safe speech invocation.
 - Implemented: the quality workflow runs unit tests and Python compilation.
 - Passed by source inspection: README claims do not exceed implemented behavior.
 - Preserved: no pull request has been opened upstream.
